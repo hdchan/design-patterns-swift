@@ -10,6 +10,19 @@ protocol Subject {
     func notify()
 }
 
+class ObserverComposite: Observer {
+    
+    private var observers: [Observer]
+    
+    init(observers: [Observer]) {
+        self.observers = observers
+    }
+    
+    func update() {
+        observers.forEach { $0.update() }
+    }
+}
+
 class WeatherStationHeadQuarter: Subject {
     private var observers: [Observer] = []
     
@@ -59,15 +72,17 @@ let hq = WeatherStationHeadQuarter()
 let ws1 = LocalWeatherStation(stationNumber: 1, headQuarter: hq)
 let ws2 = LocalWeatherStation(stationNumber: 2, headQuarter: hq)
 
-hq.attach(observer: ws1)
+let allWS = ObserverComposite(observers: [ws1, ws2])
+
+hq.attach(observer: allWS)
 hq.setTemperature(temperature: 20)
 
-hq.attach(observer: ws2)
-hq.setTemperature(temperature: 50)
-
-hq.detach(observer: ws1)
-hq.setTemperature(temperature: 60)
-
-hq.detach(observer: ws2)
-hq.setTemperature(temperature: 99)
+//hq.attach(observer: ws2)
+//hq.setTemperature(temperature: 50)
+//
+//hq.detach(observer: ws1)
+//hq.setTemperature(temperature: 60)
+//
+//hq.detach(observer: ws2)
+//hq.setTemperature(temperature: 99)
 
